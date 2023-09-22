@@ -1,0 +1,25 @@
+vue js?
+
+'to do list' with vuejs
+- instalasi awal
+- perancangan db (env, buat table todolist, migrate)
+- perancangan apicontroller (CRUD) di controller
+- routing di api.php
+- testing api di postman
+- membuat file blade
+- import bootstrap, vue, axios, dan jquery di head
+- implementasi vue js
+- buat controller untuk nampilin blade
+- buat script untuk crud dan search data di blade
+
+declarative rendering?
+    <div id="app">
+        {{ message }}
+    </div>
+
+    var app = new Vue({
+        el = '#app',
+        data = {
+            message: 'Hello Vue'
+        }
+    })

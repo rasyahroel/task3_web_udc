@@ -1,0 +1,1387 @@
+Laravel 9
+->
+
+install 
+
+install Laravel
+-> pilih lokasi untuk letak project
+-> pake composer
+    composer create-project laravel/laravel:^9.0 example-app
+-> untuk menjalankannya
+    php artisan serve
+
+
+
+
+
+
+Jelasin:
+- Route?
+=====================
+    Route::get('/', function () {
+        return view('welcome');
+    });
+
+
+    Route::get('/about', function () {
+        return 'whatever';
+    });
+
+
+Jika buat riute ini, buat juga filenya di resources/views
+    Route::get('/contact', function () {
+        return view('welcome');
+    });
+
+
+di laravel tidak perlu tag php
+    <?php ?>
+
+
+Cara simple memanggil view
+    Route::view('/contact', 'contact');
+
+
+Jika ada parameter,
+    Route::get('/contact', function () {
+        return view('contact', ['name' => 'CONTACT', 'email' => 'email@email.com']);
+    });
+atau
+    Route::view('/contact', 'contact',['name' => 'CONTACT', 'email' => 'email@email.com']);
+maka di file bladenya bisa manggil
+    <h2>{{ $name }}</h2>
+    <h2>{{ $email }}</h2>
+
+
+    use App\Http\Controllers\UserController;
+    Route::get('/user', [UserController::class, 'index']);
+
+
+Method yg ada di routes:
+    Route::get($uri, $callback);        // dapat data
+    Route::post($uri, $callback);       // nulis data
+    Route::put($uri, $callback);        // edit data
+    Route::patch($uri, $callback);      // edit data
+    Route::delete($uri, $callback);     // delete data
+    Route::options($uri, $callback);
+
+
+    Route::redirect('/contact', '/contact-us');
+
+
+Route Parameters?
+    Route::get('/product/{id}', function ($id) {
+        return 'Product dengan id '.$id;
+    });
+
+
+    Route::get('/product/{id}', function ($id) {
+        return view('product.detail',['id' => $id]);        // file detail di dalam folder product
+    });
+lalu di file detail
+    <h1>Ini detail product dengan id {{ $id }}</h1>
+dan di url
+    http://127.0.0.1:8000/product/100
+
+
+Route Prefixes?
+    Route::prefix('admin')->group(function () {
+        Route::get('/profile-admin', function () {
+            return 'profile administration';
+        });
+        Route::get('/contact-admin', function () {
+            return 'contact administration';
+        });
+        Route::get('/about-admin', function () {
+            return 'about administration';
+        });
+    });
+
+
+    php artisan route:list
+
+
+
+
+
+
+
+Blade templating?
+
+
+letak filenya di resources/views
+
+
+fitur bawaan blade:
+    <h2>{{ $name }}</h2>
+
+
+moustache?
+
+
+if statements?
+
+
+    @if ($role == 'admin')
+        <a href="">Ke halaman Admin</a>
+    @elseif ($role == 'staff')
+        <a href="">Ke halaman Storage</a>
+    @else
+        <a href="">Ke halaman Home</a>
+    @endif
+
+
+    @unless (Auth::check())
+        You are not signed in.
+    @endunless
+
+
+    @isset($records)
+        // $records is defined and is not null...
+    @endisset
+    
+    @empty($records)
+        // $records is "empty"...
+    @endempty
+
+
+Switch statements?
+
+
+    @switch($role)
+        @case($role == 'admin')
+            <a href="">Ke halaman Admin</a>
+        @break
+
+        @case($role == 'staff')
+            <a href="">Ke halaman Storage</a>
+        @break
+
+        @default
+            <a href="">Ke halaman Home</a>
+    @endswitch
+
+
+Loops?
+
+
+    @for ($i = 0; $i < 5; $i++)
+        {{ $i }} <br>
+    @endfor
+
+
+    @foreach ($buah as $data)
+        {{ $data }} <br>
+    @endforeach
+
+
+variable $loop?
+
+
+    <table class="table">
+        <tr>
+            <th>No.</th>
+            <th>Nama</th>
+        </tr>
+        @foreach ($buah as $data)
+            <tr>
+                <td> {{ $loop->iteration }} </td>
+                <td> {{ $data }} </td>
+            </tr>
+        @endforeach
+    </table>
+
+
+Layout using template inheritance?
+
+
+    @yield('title')                             // parent
+
+    @section('title', 'Home')                   // child
+
+
+    @extends('layouts.mainlayout')              // child
+
+
+    @section('content')                         // child
+        <h1>Ini adalah Home</h1>
+        <h2>Welcome, {{ $name }}!! Anda adalah {{ $role }}</h2>
+
+        <table class="table">
+            <tr>
+                <th>No.</th>
+                <th>Nama</th>
+            </tr>
+            @foreach ($buah as $data)
+                <tr>
+                    <td> {{ $loop->iteration }} </td>
+                    <td> {{ $data }} </td>
+                </tr>
+            @endforeach
+        </table>
+        </div>
+    @endsection
+
+    @yield('content')                           // parent
+
+
+Components?
+
+
+
+file .env?
+
+file config (
+    app.php
+    database.php
+)?
+
+
+
+
+
+
+Migration?
+
+
+lokasi file migration?
+
+
+file dasar migration?
+
+
+fungsi up domn migration?
+
+
+    php artisan migrate?
+
+
+    php artisan make:migration create_students_table
+
+
+membuat table & column di migration?
+
+
+Available column type?
+
+
+table migration di db?
+
+
+update table migration?
+
+
+    php artisan make:migration add_gender_column_to_students_table
+
+
+- buat db baru
+- ganti nama db di env
+- php artisan migrate
+- buat migration db
+- buat model
+- buat view
+- buat controller
+
+
+rollback migration?
+
+
+    php artisan migrate:rollback
+
+
+    php artisan migrate:rollback --step=5
+
+
+update column migration?
+
+
+    php artisan make:migration change_gender_attributes_in_students_table
+
+
+    composer require doctrine/dbal
+
+
+update column migration?
+
+
+    php artisan make:migration add_class_id_column_to_students_table
+
+
+MVC?
+
+
+    php artisan make:model Student
+
+
+    protected $table = 'students';
+
+
+    protected $primaryKey = 'class_id';
+
+
+    public $incrementing = false;
+
+
+    protected $keyType = 'string';
+
+
+    public $timestamps = false;
+
+
+    php artisan make:controller StudentController
+
+
+    Route::get('/students', [StudentController::class, 'index']);
+
+
+    var_dump('test')            // di controller index
+    dd('test')                  // di controller index
+
+
+    public function index(){
+        return view('student');
+    }
+
+
+data dari db?
+
+
+eloquent orm?
+
+
+query builder?
+
+
+raw query?
+
+
+sql injection?
+
+
+    public function index(){
+        $student = Student::all();
+        return view('student',['studentList' => $student]);
+    }
+
+
+Database Seeder?
+
+
+    php artisan make:migration add_unique_rule_in_classes_table
+
+
+    $table->string('name')->unique()->change();
+    $table->dropUnique('class_name_unique');
+
+
+    php artisan make:seeder ClassSeeder
+
+
+    public function run()
+    {
+        Classes::insert([
+            'name' => 'RPL',
+            'created_at' => Carbon::now(),
+            'update_at' => Carbon::now()
+        ]);
+    }                                           // di ClassSeeder
+
+
+    php artisan db:seed --class=ClassSeeder
+
+
+truncate table di seeder?
+
+
+    Schema::enableForeignKeyConstraints();
+    Classes::truncate();
+    Schema::disableForeignKeyConstraints();
+
+
+    $data = [
+        ['name' => 'AA', 'gender' => 'L', 'nis' => '001', 'class_id' => 1],
+        ['name' => 'BB', 'gender' => 'P', 'nis' => '002', 'class_id' => 2],
+        ['name' => 'CC', 'gender' => 'P', 'nis' => '003', 'class_id' => 3],
+        ['name' => 'DD', 'gender' => 'L', 'nis' => '004', 'class_id' => 4]
+    ];
+    foreach ($data as $value) {
+        Student::insert([
+            'name' => $value['name'],
+            'gender' => $value['gender'],
+            'nis' => $value['nis'],
+            'class_id' => $value['class_id'],
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now()
+        ]);
+    }
+
+
+    $this->call([
+        ClassesSeeder::class,
+        StudentSeeder::class
+    ]);                                                 // di database seeder
+
+
+    php artisan db:seed
+
+
+FACTORY(FAKER)?
+
+
+    php artisan make:factory StudentFactory
+
+
+    composer require fakerphp/faker
+
+
+    composer require fakerphp/faker --dev
+
+
+    use Illuminate\Database\Eloquent\Factories\Factory;
+    use Faker\Factory as FakerFactory;
+    $faker = FakerFactory::create();
+    return [
+        'name' => $faker->name(),
+        'gender'=> Arr::random(['L','P']),
+        'nis'=> mt_rand(0000001, 9999999),
+        'class_id'=> Arr::random([1,2,3,4])
+    ];
+
+
+    Student::factory()->count(10)->create();
+
+
+Query builder?
+get data menggunakan query builder?
+
+
+    $student = DB::table('students')->get();
+
+
+create data menggunakan query builder?
+
+
+    DB::table('students')->insert([
+        'name' => 'query builder',
+        'gender' => 'L',
+        'nis'=>'0072412',
+        'class_id' => 1
+    ]);
+
+
+update data menggunakan query builder?
+
+
+    DB::table('students')->where('id', 5)->update([
+        'name'=> 'Student',
+        'class_id' => 3
+    ]);
+
+
+delete data menggunakan query builder?
+
+
+    DB::table('students')->where('id', 5)->delete();
+
+
+Eloquent?
+get data menggunakan eloquent?
+
+
+    $student = Student::all();
+    return view('student', ['studentList' => $student]);
+
+
+create data menggunakan eloquent?
+
+
+    Student::create([
+        'name' => 'query builder',
+        'gender' => 'L',
+        'nis'=>'0072412',
+        'class_id' => 1
+    ]);
+
+
+    protected $fillable = [
+        'name', 'gender', 'nis', 'class_id'
+    ];
+
+
+update data menggunakan eloquent?
+
+
+    Student::find(20)->update([
+        'name' => 'query builder',
+        'class_id' => 3
+    ]);
+
+
+delete data menggunakan eloquent?
+
+
+    Student::find(10)->delete();
+
+
+Collection methods?
+https://laravel.com/docs/9.x/collections#available-methods
+
+
+    $nilai = [9,4,5,2,6,7,8,3,4,1,3,5,6];
+    $rataRata = collect($nilai)->avg();
+
+
+    $c = collect($nilai)->contains(11)
+
+
+    $c = collect($nilai)->contains(function($value){
+        return $value < 6;
+    })
+
+
+    $restoA = ['burger','pizza','spaghetti','bakso'];
+    $restoB = ['pizza','fried chicken','bakso','martabak'];
+    $menuRestoA = collect($restoA)->diff($restoB);
+
+
+    $nilai = [9,4,5,2,6,7,8,3,4,1,3,5,6];
+    $f = collect($nilai)->filter(function($value){
+        return $value > 7;
+    })->all();
+
+
+    $bio = [
+        ['nama' => 'budi', 'umur' => 17]
+        ['nama' => 'ani', 'umur' => 16]
+        ['nama' => 'siti', 'umur' => 17]
+        ['nama' => 'rudi', 'umur' => 20]
+    ];
+    $b = collect($bio)->pluck('nama')
+
+
+    $nilai = [9,4,5,2,6,7,8,3,4,1,3,5,6];
+    $m = collect($nilai)->map(function(){
+        return value * 2;
+    })->all();
+
+
+Eloquent Relationship?
+
+
+many to one relationship?
+
+
+    public function class()
+    {
+        return $this->belongsTo(Classes::class);
+    }
+
+
+    <td>{{ $data->class['name'] }}</td>
+
+
+lazy loading?
+eager loading?
+
+
+    $student = Student::with('class')->get();
+
+
+one to many relationship?
+
+
+    public function students()
+    {
+        return $this->hasMany(Student::class);
+    }
+
+
+    $class = Classes::with('students')->get();
+
+
+    @foreach ($classList as $data)
+        <tr>
+            <td>{{ $loop->iteration }}</td>
+            <td>{{ $data->name }}</td>
+            <td>
+                @foreach ($data->students as $student)
+                    {{ $student->name }} <br>
+                @endforeach
+            </td>
+        </tr>
+    @endforeach
+
+
+many to many relationship?
+
+
+    public function extracurriculars()
+    {
+        return $this->belongsToMany(Extracurricular::class, 'student_extracurricular', 'student_id', 'extracurricular_id');
+    }
+
+
+Nested relationship?
+
+
+    $student = Student::with(['class.homeroomTeacher', 'extracurriculars'])->get();
+
+
+    <td>{{$data->class->homeroomTeacher->name}}</td>
+
+
+
+
+
+
+
+
+
+
+Membuat CRUD, Create
+- buat button
+    <div>
+        <a href="" class="btn btn-primary">Add Data</a>
+    </div>
+    
+- buat route
+    Route::get('/student-add', [StudentController::class, 'create']);
+
+- buat controller
+    public function create()
+    {
+        $class = Classes::select('id', 'name')->get();
+        return view('student-add', ['class' => $class]);
+    }
+
+    public function store(Request $request)
+    {
+        $student = new Student;
+        $student->name = $request->name;
+        $student->gender = $request->gender;
+        $student->nis = $request->nis;
+        $student->class_id = $request->class_id;
+        $student->save();
+        return redirect('/students');
+    }
+
+mass assignment?
+
+    public function store(Request $request)
+    {
+       $student = Student::create($request->all());
+       return redirect('/students');
+    }
+    
+lalu isi di model
+    
+    protected $fillable = [
+        'name', 'gender', 'nis', 'class_id'
+    ];
+
+- buat view
+
+    @extends('layouts.mainlayout')
+
+    @section('title', 'Students | Add New')
+
+    @section('content')
+        <div class="mt-5">
+            <form action="student" method="POST">
+                @csrf
+                <div class="mb-3">
+                    <label for="name">Name</label>
+                    <input type="text" class="form-control" name="name" id="name" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="gender">Gender</label>
+                    <select name="gender" id="gender" class="form-control" required>
+                        <option value="">Select One</option>
+                        <option value="L">L</option>
+                        <option value="P">P</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="nis">NIS</label>
+                    <input type="text" class="form-control" name="nis" id="nis" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="class">Class</label>
+                    <select name="class_id" id="class" class="form-control" required>
+                        <option value="">Select One</option>
+                        @foreach ($class as $item)
+                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <button class="btn btn-success" type="submit">SAVE</button>
+                </div>
+            </form>
+        </div>
+    @endsection
+
+
+
+Membuat CRUD, update
+- tambah button
+    <td><a href="student-edit/{{ $data->id }}">Edit</a></td>
+
+- buat route
+    Route::get('/student-edit/{id}', [StudentController::class, 'edit']);
+    Route::put('/student/{id}', [StudentController::class, 'update']);
+
+- buat view
+    @extends('layouts.mainlayout')
+
+    @section('title', "Students | Update {{ $student->name }}")
+
+    @section('content')
+        <div class="mt-5 col-8 m-auto">
+            <form action="/student/{{ $student->id }}" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="mb-3">
+                    <label for="name">Name</label>
+                    <input type="text" class="form-control" name="name" id="name" value="{{ $student->name }}">
+                </div>
+
+                <div class="mb-3">
+                    <label for="gender">Gender</label>
+                    <select name="gender" id="gender" class="form-control">
+                        <option value="{{ $student->gender }}">{{ $student->gender }}</option>
+                        @if ($student->gender == 'L')
+                            <option value="P">P</option>
+                        @else
+                            <option value="L">L</option>
+                        @endif
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="nis">NIS</label>
+                    <input type="text" class="form-control" name="nis" id="nis" value="{{ $student->nis }}">
+                </div>
+
+                <div class="mb-3">
+                    <label for="class">Class</label>
+                    <select name="class_id" id="class" class="form-control">
+                        <option value="{{ $student->class->id }}">{{ $student->class->name }}</option>
+                        @foreach ($class as $item)
+                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <button class="btn btn-success" type="submit">SAVE</button>
+                </div>
+            </form>
+        </div>
+    @endsection
+
+- buat controller
+    public function edit(Request $request, $id)
+    {
+        $student = Student::with('class')->findOrFail($id);
+        $class = Classes::where('id', '!=', $student->class_id)->get(['id', 'name']);
+        return view('student-edit', ['student' => $student, 'class' => $class]);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $student = Student::findOrFail($id);
+        $student->name = $request->name;
+        $student->gender = $request->gender;
+        $student->nis = $request->nis;
+        $student->class_id = $request->class_id;
+        $student->save();
+        return redirect('/students');
+    }
+
+mass assignment?
+
+    public function update(Request $request, $id)
+    {
+        $student = Student::findOrFail($id);
+        $student->update($request->all());
+        return redirect('/students');
+    }
+
+
+session flash message?
+
+
+    if ($student) {
+        Session::flash('status','success');
+        Session::flash('message','Add new student success');
+    }                                               // di controller yang store
+
+
+    @if (Session::has('status'))
+        <div class="alert alert-success" role="alert">
+            {{ Session::get('message') }}
+        </div>
+    @endif                                          // di view
+
+
+form validasi?
+
+
+    $validated = $request->validate([
+        'nis' => 'unique:students|max:8|required',
+        'name' => 'max:50|required',
+        'gender' => 'required',
+        'class_id' => 'required'
+    ]);
+
+
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+
+file validasi eksternal?
+
+
+    php artisan make:request StudentCreateRequest
+
+
+    public function rules()
+    {
+        return [
+            'nis' => 'unique:students|max:8|required',
+            'name' => 'max:50|required',
+            'gender' => 'required',
+            'class_id' => 'required'
+        ];
+    }                                                   // di studentcreaterequest
+
+
+    public function attributes()
+    {
+        return [
+            'class_id' => 'class'
+        ];
+    }
+
+
+Membuat CRUD, delete
+- tambah button dan message
+    @if (Session::has('status'))
+        <div class="alert alert-success" role="alert">
+            {{ Session::get('message') }}
+        </div>
+    @endif
+    
+    <td><a href="student-delete/{{ $data->id }}">Delete</a></td>
+
+- buat route    
+    Route::get('/student-delete/{id}', [StudentController::class, 'delete']);
+    Route::delete('/student-destroy/{id}', [StudentController::class, 'destroy']);
+
+- file delete
+    @extends('layouts.mainlayout')
+
+    @section('title', "Students | Update {{ $student->name }}")
+
+    @section('content')
+        <div class="mt-5">
+            <h2>Are you sure to delete data : {{ $student->name }} ({{ $student->nis }})</h2>
+
+            <form action="/student-destroy/{{$student->id}}" method="POST" style="display: inline-block">
+
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+
+            <a href="/students" class="btn btn-primary">Cancel</a>
+        </div>
+    @endsection
+
+- buat controller
+    public function delete($id)
+    {
+        $student = Student::findOrFail($id);
+        return view('student-delete', ['student' => $student]);
+    }
+
+    public function destroy($id)
+    {
+        $deleteStudent = Student::findOrFail($id);
+        $deleteStudent->delete();
+
+        if ($deleteStudent) {
+            Session::flash('status', 'success');
+            Session::flash('message', 'Delete student success');
+        }
+
+        return redirect('/students');
+    }
+
+
+
+
+
+
+Soft delete?
+
+
+    use HasFactory, SoftDeletes;
+
+
+    php artisan make:migration add_soft_delete_column_to_students_table
+
+
+    Schema::table('students', function (Blueprint $table) {
+        $table->softDeletes();
+    });
+
+
+    Schema::table('students', function (Blueprint $table) {
+        $table->dropSoftDeletes();
+    });
+
+
+Restore?
+
+
+- route
+    Route::get('/student-deleted', [StudentController::class, 'deletedStudent']);
+    Route::get('/student/{id}/restore', [StudentController::class, 'restore']);
+
+- controller
+    public function deletedStudent()
+    {
+        $deletedStudent = Student::onlyTrashed()->get();
+        return view('student-deleted-list', ['student' => $deletedStudent]);
+    }
+
+    public function restore($id)
+    {
+        $deletedStudent = Student::withTrashed()->where('id', $id)->restore();
+
+        if ($deletedStudent) {
+            Session::flash('status', 'success');
+            Session::flash('message', 'Restore student success');
+        }
+
+        return redirect('/students');
+    }
+
+- view
+    @extends('layouts.mainlayout')
+
+    @section('title', 'Students')
+
+    @section('content')
+        <h1>Ini halaman Student yang telah di hapus</h1>
+
+        <a href="/students" class="btn btn-primary">Back</a>
+
+        <div class="mt-5">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Nama</th>
+                        <th>Gender</th>
+                        <th>NIS</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($student as $item)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $item->name }}</td>
+                            <td>{{ $item->gender }}</td>
+                            <td>{{ $item->nis }}</td>
+                            <td><a href="/student/{{ $item->id }}/restore">Restore</a></td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    @endsection
+
+
+Pagination?
+
+
+    public function index()
+    {
+        $student = Student::paginate();
+        return view('student', ['studentList' => $student]);
+    }
+
+
+    <div class="my-5">
+        {{ $studentList->withQueryString()->links() }}
+    </div>
+
+
+    public function boot()
+    {
+        Paginator::useBootstrapFive();
+    }                                                   // di appserviceprovider
+
+
+Search Data?
+
+
+    public function index(Request $request)
+    {
+        $keyword = $request->keyword;
+        $student = Student::with('class')
+            ->where('name', 'LIKE', '%' . $keyword . '%')
+            ->orWhere('gender', $keyword)
+            ->orWhere('nis', 'LIKE', '%' . $keyword . '%')
+            ->orWhereHas('class', function ($query) use ($keyword) {
+                $query->where('name', 'LIKE', '%' . $keyword . '%');
+            })
+            ->paginate(10);
+        return view('student', ['studentList' => $student]);
+    }
+
+
+    <div class="my-3 col-12 col-sm-8 col-md-5">
+        <form action="" method="GET">
+            <div class="input-group flex-nowrap">
+                <input type="text" name="keyword" class="form-control" placeholder="Keyword">
+                <button class="input-group-text btn btn-primary" id="addon-wrapping">Search</button>
+            </div>
+        </form>
+    </div>
+
+
+File storage?
+
+
+how to upload image?
+
+
+    public function up()
+    {
+        Schema::table('students', function (Blueprint $table) {
+            $table->string('image', 255)->nullable()->after('class_id');
+        });
+    }
+
+
+    public function down()
+    {
+        Schema::table('students', function (Blueprint $table) {
+            if (Schema::hasColumn('students', 'image')) {
+                $table->dropColumn('image');
+            }
+        });
+    }
+
+
+    FILESYSTEM_DISK=public                          // di env
+
+
+
+
+
+Authentication?
+- tambah role
+    php artisan make:migration create_roles_table
+
+- buat model
+    php artisan make:model Role
+
+    protected $fillable = ['name'];
+
+- buat seeder
+    php artisan make:seeder RoleSeeder
+
+    public function run()
+    {
+        Schema::enableForeignKeyConstraints();
+        Role::truncate();
+        Schema::disableForeignKeyConstraints();
+
+        $data = [
+            ['name' => 'Admin'],
+            ['name' => 'Teacher'],
+            ['name' => 'Student'],
+        ];
+
+        foreach ($data as $value) {
+            Role::insert([
+                'name' => $value['name'],
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
+            ]);
+        }
+    }
+
+    php artisan db:seed --class=RoleSeeder
+    
+- tambah role_id di user
+    php artisan make:migration add_role_id_column_to_users_table
+
+    public function up()
+    {
+        Schema::table('users', function (Blueprint $table) {
+            $table->unsignedBigInteger('role_id')->after('email');
+            $table->foreign('role_id')->references('id')->on('roles')->onDelete('restrict');
+        });
+    }
+
+    public function down()
+    {
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropForeign(['role_id']);
+            $table->dropColumn('role_id');
+        });
+    }
+
+- buat controller
+    php artisan make:controller AuthController
+
+    public function login()
+    {
+        return view('login');
+    }
+
+    public function authenticate(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required']
+        ]);
+
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+            return redirect()->intended('/');
+        }
+
+        Session::flash('status', 'failed');
+        Session::flash('message', 'login wrong');
+
+        return redirect('/login');
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('/login');
+    }
+
+- buat view
+    <!DOCTYPE html>
+    <html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Laravel 9 | Login</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+            integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+
+    </head>
+
+    <style>
+        .login-box {
+            border: solid 1px;
+            width: 500px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+    </style>
+
+    <body>
+        <div class="vh-100 d-flex justify-content-center align-items-center flex-column">
+
+            @if (Session::has('status'))
+                <div class="alert alert-danger" role="alert">
+                    {{ Session::get('message') }}
+                </div>
+            @endif
+
+            <div class="login-box">
+                <form action="" method="POST">
+
+                    @csrf
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" name="email" id="email" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" name="password" id="password" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <button class="btn btn-primary form-control" type="submit">LOGIN</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous">
+        </script>
+    </body>
+
+    </html>
+
+
+- update route
+    Route::get('/', function () {
+        return view('home');
+    });
+
+    Route::get('/login', [AuthController::class, 'login'])->name('login')->middleware('guest');
+    Route::post('/login', [AuthController::class, 'authenticate'])->middleware('guest');
+    Route::get('/logout', [AuthController::class, 'logout'])->middleware('auth');
+
+    Route::get('/students', [StudentController::class, 'index'])->middleware('auth');
+    Route::get('/student/{id}', [StudentController::class, 'show'])->middleware('auth');
+    Route::get('/student-add', [StudentController::class, 'create'])->middleware('auth');
+    Route::post('/student', [StudentController::class, 'store'])->middleware('auth');
+    Route::get('/student-edit/{id}', [StudentController::class, 'edit'])->middleware('auth');
+    Route::put('/student/{id}', [StudentController::class, 'update'])->middleware('auth');
+    Route::get('/student-delete/{id}', [StudentController::class, 'delete'])->middleware('auth');
+    Route::delete('/student-destroy/{id}', [StudentController::class, 'destroy'])->middleware('auth');
+    Route::get('/student-deleted', [StudentController::class, 'deletedStudent'])->middleware('auth');
+    Route::get('/student/{id}/restore', [StudentController::class, 'restore'])->middleware('auth');
+
+    Route::get('/classroom', [ClassController::class, 'index'])->middleware('auth');
+    Route::get('/classroom-detail/{id}', [ClassController::class, 'show'])->middleware('auth');
+
+    Route::get('/extracurricular', [ExtracurricularController::class, 'index'])->middleware('auth');
+    Route::get('/extracurricular-detail/{id}', [ExtracurricularController::class, 'show'])->middleware('auth');
+
+    Route::get('/teacher', [TeacherController::class, 'index'])->middleware('auth');
+    Route::get('/teacher-detail/{id}', [TeacherController::class, 'show'])->middleware('auth');
+
+- update model user
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'role_id'
+    ];
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class, 'role_id', 'id');
+    }
+
+- update home view
+    @extends('layouts.mainlayout')
+
+    @section('title', 'Home')
+
+    @section('content')
+        <h1>Ini adalah Home</h1>
+        <h2>Welcome, {{ Auth::user()->name }}!! Anda adalah {{ Auth::user()->role->name }}</h2>
+    @endsection
+
+- update routeserviceprovider
+    public const HOME = '/';
+
+- tambah menu logout di navbar
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link"  href="/logout">Logout</a>
+        </li>
+    </ul>
+
+
+
+
+
+
+Middleware?
+
+
+    php artisan make:middleware MustAdmin
+
+
+    public function handle(Request $request, Closure $next)
+    {
+        if (Auth::user()->role_id != 1) {
+            abort(404);
+        }
+
+        return $next($request);
+    }
+
+
+    php artisan make:middleware MustAdminOrTeacher
+
+
+    public function handle(Request $request, Closure $next)
+    {
+        if (Auth::user()->role_id != 1 && Auth::user()->role_id != 2) {
+            abort(404);
+        }
+
+        return $next($request);
+    }
+
+
+    protected $routeMiddleware = [
+        ...
+        'must-admin' => App\Http\Middleware\MustAdmin::class,
+        'must-admin-or-teacher' => App\Http\Middleware\MustAdminOrTeacher::class,
+    ];                                                  // di kernel
+
+
+    @if (Auth::user()->role_id != 1 && Auth::user()->role_id != 2)
+        -
+    @else
+        <td><a href="student/{{ $data->id }}">Detail</a></td>
+        <td><a href="student-edit/{{ $data->id }}">Edit</a></td>
+    @endif
+
+    @if (Auth::user()->role_id == 1)
+        <td><a href="student-delete/{{ $data->id }}">Delete</a></td>
+    @endif
+
+
+    Route::get('/login', [AuthController::class, 'login'])->name('login')->middleware('guest');
+    Route::post('/login', [AuthController::class, 'authenticate'])->middleware('guest');
+    Route::get('/logout', [AuthController::class, 'logout'])->middleware('auth');
+
+    Route::get('/students', [StudentController::class, 'index'])->middleware('auth');
+
+    Route::get('/student/{id}', [StudentController::class, 'show'])->middleware(['auth', 'must-admin-or-teacher']);
+    Route::get('/student-add', [StudentController::class, 'create'])->middleware(['auth', 'must-admin-or-teacher']);
+    Route::post('/student', [StudentController::class, 'store'])->middleware(['auth', 'must-admin-or-teacher']);
+    Route::get('/student-edit/{id}', [StudentController::class, 'edit'])->middleware(['auth', 'must-admin-or-teacher']);
+    Route::put('/student/{id}', [StudentController::class, 'update'])->middleware(['auth', 'must-admin-or-teacher']);
+
+    Route::get('/student-delete/{id}', [StudentController::class, 'delete'])->middleware(['auth', 'must-admin']);
+    Route::delete('/student-destroy/{id}', [StudentController::class, 'destroy'])->middleware(['auth', 'must-admin']);
+    Route::get('/student-deleted', [StudentController::class, 'deletedStudent'])->middleware(['auth', 'must-admin']);
+    Route::get('/student/{id}/restore', [StudentController::class, 'restore'])->middleware(['auth', 'must-admin']);
+
+    Route::get('/classroom', [ClassController::class, 'index'])->middleware('auth');
+    Route::get('/classroom-detail/{id}', [ClassController::class, 'show'])->middleware('auth');
+
+    Route::get('/extracurricular', [ExtracurricularController::class, 'index'])->middleware('auth');
+    Route::get('/extracurricular-detail/{id}', [ExtracurricularController::class, 'show'])->middleware('auth');
+
+    Route::get('/teacher', [TeacherController::class, 'index'])->middleware('auth');
+    Route::get('/teacher-detail/{id}', [TeacherController::class, 'show'])->middleware('auth');

@@ -1,0 +1,169 @@
+1. Instal laravel (Jetstream Livewere dan Socialite)
+    composer create-project laravel/laravel olshop     
+    composer require laravel/jetstream
+    php artisan jetstream:install livewire
+    npm install
+    npm run dev
+
+    - atur db env
+
+    php artisan migrate
+    composer require laravel/socialite
+
+    - tambah di app
+    'aliases' => Facade::defaultAliases()->merge([
+        'Socialite' => Laravel\Socialite\Facades\Socialite::class
+    ])->toArray(),
+
+    - buat project google app, lalu buat credentials OAuth
+    https://console.cloud.google.com/projectselector2/apis/credentials?pli=1&supportedpurview=project
+
+    - save client id dan client secret di services
+    'google' => [
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect' => env('GOOGLE_REDIRECT'),
+    ],
+
+    - tambah kolom google_id setelah id di users
+
+    - tambah 'google_id' di fillable user model
+
+    php artisan make:controller LoginWithGoogleController
+
+    class LoginWithGoogleController extends Controller
+    {
+        public function redirectToGoogle()
+        {
+            return Socialite::driver('google')->redirect();
+        }
+
+        public function handleGoogleCallback()
+        {
+            try {
+                $user = Socialite::driver('google')->user();
+                $finduser = User::where('google_id', $user->id)->first();
+
+                if ($finduser) {
+                    Auth::login($finduser);
+                    return redirect()->intended('dashboard');
+                } else {
+                    $newUser = User::create([
+                        'name' => $user->name,
+                        'email' => $user->email,
+                        'google_id' => $user->id,
+                        'password' => encrypt('123456dummy')
+                    ]);
+
+                    Auth::login($newUser);
+                    return redirect()->intended('dashboard');
+                }
+            } catch (Exception $e) {
+                dd($e->getMessage());
+            }
+        }
+    }
+
+    Route::get('auth/google', [LoginWithGoogleController::class, 'redirectToGoogle']);
+    Route::get('auth/google/callback', [LoginWithGoogleController::class, 'handleGoogleCallback']);
+
+    - tambah button google
+    <div class="flex items-center justify-end mt-4">
+        <a href="{{ url('auth/google') }}">
+            <img src="https://developers.google.com/static/identity/images/btn_google_signin_dark_normal_web.png"
+                style="margin-left: 3em;"></a>
+    </div>
+
+
+
+2. Integrasi Template OneTech dengan Laravel
+    - download template lalu save di public/asset
+    https://github.com/imamahmadashari/laravelproject
+
+
+3. Membuat otentikasi user dengan laravel
+    php artisan make:middleware Level
+
+    public function handle(Request $request, Closure $next, ...$levels): Response
+    {
+        if (in_array($request->user()->level,$levels)) {
+            return $next($request);
+        }
+
+        if (Auth::user()->level == 'admin') {
+            return Redirect::to('dashboard');
+        } elseif (Auth::user()->level == 'owner') {
+            return Redirect::to('dashboard');
+        } elseif (Auth::user()->level == 'operator') {
+            return Redirect::to('dashboard');
+        } elseif (Auth::user()->level == 'pelanggan') {
+            return Redirect::to('/');
+        }
+    }
+
+    - update di kernel
+    'level' => App\Http\Middleware\Level::class,
+
+    - tambah 'level' di fillable user model
+
+    - atur di loginwithgooglecontroller hanya pelanggan
+    $newUser = User::create([
+        'name' => $user->name,
+        'email' => $user->email,
+        'google_id' => $user->id,
+        'level' => 'pelanggan',
+        'password' => encrypt('123456dummy')
+    ]);
+
+    - atur menu per level
+    @if (Auth::user()->level == 'admin')
+        <>...</>
+    @endif
+
+    - atur menu login berdasarkan role
+    @if (Auth::guest())
+        <div><a href="{{ url('register') }}">Register</a></div>
+        <div><a href="{{ url('login') }}">Sign in</a></div>
+    @else
+        <div><a href="{{ url('/') }}">{{ Auth::user()->name }}</a></div>
+        <div>
+            <form method="POST" action="{{ route('logout') }}" x-data>
+                @csrf
+                <a href="{{ route('logout') }}"
+                    @click.prevent="$root.submit();">Logout</a>
+            </form>
+        </div>
+    @endif
+
+    - update route
+    Route::group(['middleware' => ['auth', 'level:admin']], function () {
+        Route::get('/dashboard', function () {
+            return view('dashboard');
+        })->name('dashboard');
+    });
+    Route::group(['middleware' => ['auth', 'level:operator']], function () {
+    });
+    Route::group(['middleware' => ['auth', 'level:owner']], function () {
+        Route::get('/dashboard', function () {
+            return view('dashboard');
+        })->name('dashboard');
+    });
+    Route::group(['middleware' => ['auth', 'level:pelanggan']], function () {
+    });
+
+
+4. Integrasi template Admin Metronic dengan laravel
+    - download template Metronic lalu save di public
+    https://github.com/imamahmadashari/toko-online
+
+
+
+
+
+
+5. Membuat aksi CRUD User Akses, Settingan Toko, Data Barang dan Kategori dengan laravel
+6. Menyesuaikan template OneTech sesuai kebutuhan toko dengan laravel
+7. Membuat aski keranjang belanja dengan laravel
+8. Integrasi laravel dengan raja ongkir
+9. Membuat aksi checkout dengan laravel
+10. Membuat konfirmasi pembayaran dengan laravel
